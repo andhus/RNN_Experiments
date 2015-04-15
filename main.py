@@ -20,7 +20,7 @@ from datasets import single_bouncing_ball, save_as_gif
 # m = pylab.figure()
 # m.show()
 
-
+ 
 floatX = theano.config.floatX
 
 
