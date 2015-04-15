@@ -19,7 +19,7 @@ from datasets import single_bouncing_ball, save_as_gif
 floatX = theano.config.floatX
 
 
-n_epochs = 90
+n_epochs = 150
 x_dim = 225
 h_dim = 600
 
@@ -62,7 +62,7 @@ print 'Bulding training process...'
 algorithm = GradientDescent(cost=cost,
                             params=ComputationGraph(cost).parameters,
                             step_rule=CompositeRule([StepClipping(10.0),
-                                                     Scale(4)]))
+                                                     Scale(0.1)]))
 monitor_cost = TrainingDataMonitoring([cost],
                                       prefix="train",
                                       after_epoch=True)
