@@ -12,7 +12,7 @@ from blocks.algorithms import (GradientDescent, Scale,
 from blocks.extensions.monitoring import TrainingDataMonitoring
 from blocks.main_loop import MainLoop
 from blocks.extensions import FinishAfter, Printing
-from blocks.bricks.recurrent import SimpleRecurrent
+from blocks.bricks.recurrent import AERecurrent
 from blocks.graph import ComputationGraph
 from datasets import single_bouncing_ball, save_as_gif
 
@@ -32,8 +32,8 @@ x_to_h = Linear(name='x_to_h',
                 input_dim=x_dim,
                 output_dim=h_dim)
 x_transform = x_to_h.apply(x)
-rnn = SimpleRecurrent(activation=Tanh(),
-                      dim=h_dim, name="rnn")
+rnn = AERecurrent(activation=Tanh(),
+                  dim=h_dim, name="rnn")
 h = rnn.apply(x_transform)
 h_to_o = Linear(name='h_to_o',
                 input_dim=h_dim,
