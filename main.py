@@ -63,7 +63,7 @@ print 'Bulding training process...'
 algorithm = GradientDescent(cost=cost,
                             params=ComputationGraph(cost).parameters,
                             step_rule=CompositeRule([StepClipping(10.0),
-                                                     Scale(0.1)]))
+                                                     Scale(4)]))
 monitor_cost = TrainingDataMonitoring([cost],
                                       prefix="train",
                                       after_epoch=True)
