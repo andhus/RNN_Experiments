@@ -12,7 +12,8 @@ from blocks.algorithms import (GradientDescent, Scale,
 from blocks.extensions.monitoring import TrainingDataMonitoring
 from blocks.main_loop import MainLoop
 from blocks.extensions import FinishAfter, Printing
-from models import AERecurrent
+from blocks.bricks.recurrent import SimpleRecurrent as AERecurrent
+# from models import AERecurrent
 from blocks.graph import ComputationGraph
 from datasets import single_bouncing_ball, save_as_gif
 
