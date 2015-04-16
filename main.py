@@ -22,7 +22,7 @@ from datasets import single_bouncing_ball, save_as_gif
 floatX = theano.config.floatX
 
 
-n_epochs = 120
+n_epochs = 150
 x_dim = 225
 h_dim = 600
 
