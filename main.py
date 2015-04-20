@@ -5,11 +5,10 @@ from blocks.model import Model
 from blocks.bricks import Linear, Tanh, Sigmoid
 from blocks.bricks.cost import SquaredError
 from blocks.initialization import (IsotropicGaussian,
-                                   Constant,
-                                   Identity)
+                                   Constant)
 from fuel.datasets import IterableDataset
 from fuel.streams import DataStream
-from blocks.algorithms import (GradientDescent, Scale,
+from blocks.algorithms import (GradientDescent, Momentum,
                                StepClipping, CompositeRule)
 from blocks.extensions.monitoring import TrainingDataMonitoring
 from blocks.main_loop import MainLoop
@@ -22,7 +21,7 @@ from datasets import single_bouncing_ball, save_as_gif
 floatX = theano.config.floatX
 
 
-n_epochs = 150
+n_epochs = 200
 x_dim = 225
 h_dim = 600
 
@@ -53,7 +52,7 @@ y_hat_testing = h_to_o.apply(h_testing)
 y_hat_testing = sigm.apply(y_hat_testing)
 y_hat_testing.name = 'y_hat_testing'
 
-alpha = 0
+alpha = 0.0005
 cost_1 = SquaredError('sq1').apply(y, y_hat)
 cost_1.name = 'cost_1'
 w_rec = rnn.params[0]
@@ -71,14 +70,16 @@ for brick in (rnn, x_to_h, h_to_o):
 print 'Bulding training process...'
 algorithm = GradientDescent(cost=cost,
                             params=ComputationGraph(cost).parameters,
-                            step_rule=CompositeRule([StepClipping(10.0),
-                                                     Scale(4)]))
+                            step_rule=CompositeRule(
+                                [StepClipping(10.0),
+                                 Momentum(learning_rate=0.5, momentum=0.9)]))
+
 monitor_cost = TrainingDataMonitoring([cost],
                                       prefix="train",
                                       after_epoch=True)
-monitor = cost_2
-monitor.name = "monitor_name"
-monitor_sth = TrainingDataMonitoring([monitor],
+
+monitor_eth = TrainingDataMonitoring([cost_1,
+                                      cost_2],
                                      prefix="train",
                                      after_epoch=True)
 
@@ -93,7 +94,7 @@ stream = DataStream(dataset)
 
 model = Model(cost)
 main_loop = MainLoop(data_stream=stream, algorithm=algorithm,
-                     extensions=[monitor_cost, monitor_sth,
+                     extensions=[monitor_cost, monitor_eth,
                                  FinishAfter(after_n_epochs=n_epochs),
                                  Printing()],
                      model=model)
@@ -103,7 +104,7 @@ main_loop.run()
 
 generate1 = theano.function([x], [y_hat, h])
 generate2 = theano.function([x, h_initial], [y_hat_testing, h_testing])
-initial_seq = inputs[0, :20, 0:1, :]
+initial_seq = inputs[0, 10:25, 0:1, :]
 current_output, current_hidden = generate1(initial_seq)
 current_output, current_hidden = current_output[-1:], current_hidden[-1:]
 generated_seq = initial_seq[:, 0]
